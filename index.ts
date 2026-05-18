@@ -27,15 +27,24 @@ setInterval(() => {
 function getClientIp(req: any): string {
   const forwarded = req.headers["x-forwarded-for"];
   if (forwarded) {
-    return (forwarded as string).split(",")[0].trim();
+    const ip = (forwarded as string).split(",")[0].trim();
+    // Se for IPv6 mapeado para IPv4, limpar
+    return ip.replace(/^.*:/, "");
   }
-  return req.socket?.remoteAddress || "127.0.0.1";
+  const remoteIp = req.socket?.remoteAddress || "127.0.0.1";
+  return remoteIp.replace(/^.*:/, "");
 }
 
 async function geoLocate(ip: string) {
+  // Se for IP local, não tentar geolocalizar
+  if (ip === "127.0.0.1" || ip === "::1" || ip.startsWith("192.168.") || ip.startsWith("10.")) {
+    return { pais: "Local", estado: "Desenvolvimento", cidade: "Localhost" };
+  }
+
   try {
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=country,regionName,city`);
-    const data = await response.json();
+    // Usar HTTPS para evitar bloqueios e garantir entrega
+    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
+    const data: any = await response.json();
     if (data.status === 'success') {
       return {
         pais: data.country || "Desconhecido",
