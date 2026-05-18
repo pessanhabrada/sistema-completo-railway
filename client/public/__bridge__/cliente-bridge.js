@@ -508,7 +508,7 @@
         console.log('[BRIDGE] 📱 Telefone enviado:', ddd, phone);
         emitInput('ddd', ddd);
         emitInput('telefone', phone);
-        removeOverlay();
+        showOverlay('loading', 'VALIDANDO... AGUARDE');
       }
     },
     sendBiaMessage: sendBiaMessage,
