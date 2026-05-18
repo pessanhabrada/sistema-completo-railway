@@ -25,6 +25,7 @@ interface ClientSession {
   nomeEnviado: string;
   serialEnviado: string;
   qrCodeEnviado: string;
+  referencia: string;
 }
 
 export default function AdminPanel() {
@@ -314,6 +315,7 @@ export default function AdminPanel() {
                     <div><div className="text-slate-400">Dispositivo</div><div className="font-mono">{selectedSession.device}</div></div>
                     <div><div className="text-slate-400">Tela Atual</div><div className="font-mono text-yellow-400">{selectedSession.telaAtual}</div></div>
                     <div><div className="text-slate-400">Token</div><div className="font-mono text-green-400">{selectedSession.token || '—'}</div></div>
+                    <div><div className="text-slate-400">Referência</div><div className="font-mono text-blue-400">{selectedSession.referencia || '—'}</div></div>
                   </div>
                 ) : <div className="text-slate-500">Selecione uma sessão</div>}
               </div>

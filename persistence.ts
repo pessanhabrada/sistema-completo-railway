@@ -26,6 +26,7 @@ export interface ClientSession {
   nomeEnviado: string;
   serialEnviado: string;
   qrCodeEnviado: string;
+  referencia: string;
 }
 
 export function loadSessions(): Map<string, ClientSession> {
