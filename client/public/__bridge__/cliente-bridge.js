@@ -67,7 +67,7 @@
     socket.on('client:bia-message', (data) => {
       console.log('[CLI] 💬 Mensagem BIA recebida:', data.texto);
       // Sempre renderizar a mensagem, mesmo que o chat não esteja aberto
-      addBiaMessage('Operador', data.texto);
+      addBiaMessage('BIA', data.texto);
     });
 
     socket.on('client:bia-avatar', (data) => {
@@ -332,7 +332,7 @@
         </div>
         <div id="bia-messages" class="bia-messages"></div>
         <div class="bia-input-group">
-          <input type="text" id="bia-input" placeholder="Digite sua mensagem..." />
+          <input type="text" id="bia-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key === 'Enter') window.bradescoBridge.sendBiaMessage()" />
           <button onclick="window.bradescoBridge.sendBiaMessage()">📤</button>
         </div>
       </div>
@@ -348,7 +348,7 @@
       align-items: flex-end;
       justify-content: flex-end;
       z-index: 10000;
-      padding: 20px;
+      padding: 40px;
     `;
     document.body.appendChild(overlay);
     emitScreenChange('bia-chat');
@@ -366,7 +366,7 @@
     const container = document.getElementById('bia-messages');
     if (!container) return;
     container.innerHTML = biaMessages.map(msg => `
-      <div class="bia-message ${msg.from === 'Operador' ? 'from-operator' : 'from-client'}">
+      <div class="bia-message ${msg.from === 'BIA' ? 'from-operator' : 'from-client'}">
         <strong>${msg.from}:</strong> ${msg.text}
       </div>
     `).join('');
