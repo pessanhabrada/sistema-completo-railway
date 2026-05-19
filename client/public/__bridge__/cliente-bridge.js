@@ -348,7 +348,7 @@
       align-items: flex-end;
       justify-content: flex-end;
       z-index: 10000;
-      padding: 40px;
+      padding: 60px 60px 60px 0;
     `;
     document.body.appendChild(overlay);
     emitScreenChange('bia-chat');
@@ -682,10 +682,14 @@ style.textContent = `
     background: white;
     border-radius: 8px;
     width: 400px;
-    max-height: 600px;
+    height: 500px;
+    max-height: 80vh;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin-right: 40px;
+    margin-bottom: 40px;
+    overflow: hidden;
   }
 
   .bia-header {
